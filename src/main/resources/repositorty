@@ -1,0 +1,31 @@
+package repository
+
+import com.google.gson.Gson
+import weather.Weather
+import java.io.BufferedReader
+import java.io.IOException
+import java.io.InputStreamReader
+import java.net.HttpURLConnection
+import java.net.URL
+
+class WeatherRepository {
+    private lateinit var weather: Weather
+
+    fun getForecastWeather(url: String): Weather {
+        val url = URL(url)
+        val httpURLConnection: HttpURLConnection = url.openConnection() as HttpURLConnection
+        try {
+            val gson = Gson()
+            val bufferedReader = BufferedReader(InputStreamReader(httpURLConnection.inputStream))
+            weather = gson.fromJson(bufferedReader, Weather::class.java)
+        } catch (exception: IOException){
+            println(exception.message ?: "Error download data")
+        }
+        return weather
+    }
+
+    override fun toString(): String {
+        return "CurrentWeatherRepository(currentWeather=$weather)"
+    }
+
+}
