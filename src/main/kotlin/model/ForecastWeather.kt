@@ -4,18 +4,17 @@ import com.google.gson.annotations.SerializedName
 import java.text.SimpleDateFormat
 import java.util.*
 
-interface DateParse{
-    fun dateParse(dt_txt: String): String
-}
+interface DateParse {
+    val dt_txt: String
+    val dt_txt_parse: String
+        get() = dateParse(dt_txt)
 
-private class DateParseOperation {
-    fun dateParse(dtTxt: String): String {
+    private fun dateParse(dt_txt: String): String {
         var simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-        val date: Date = simpleDateFormat.parse(dtTxt)
+        val date: Date = simpleDateFormat.parse(dt_txt)
         simpleDateFormat = SimpleDateFormat("dd-MM-yyyy")
         val formatDate: String = simpleDateFormat.format(date)
         return formatDate
-
     }
 }
 
@@ -30,7 +29,10 @@ data class ForecastWeather(
 data class ListWeather(
     val clouds: Clouds,
     val dt: Int,
-    val dt_txt: String,
+    /***
+     * @param data_text дата в формате 00-00-00
+     */
+    override val dt_txt: String,
     val main: Main,
     val pop: Double,
     val rain: Rain,
@@ -38,16 +40,7 @@ data class ListWeather(
     val visibility: Int,
     val weather: List<Weather>,
     val wind: Wind
-):DateParse {
-    override fun dateParse(dt_txt: String): String {
-        val dateParseOperation = DateParseOperation()
-        return dateParseOperation.dateParse(dtTxt = this.dt_txt)
-    }
-
-    override fun toString(): String {
-        return "ListWeather(dt_txt='${dateParse(dt_txt)}', main=$main)"
-    }
-}
+) : DateParse
 
 data class Main(
     val feels_like: Double,
